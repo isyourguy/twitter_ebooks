@@ -160,6 +160,8 @@ module Ebooks
     attr_accessor :conversations
     # @return [Range, Integer] range of seconds to delay in delay method
     attr_accessor :delay_range
+    # @return [Array<String>] list of usernames of bots that get to dodge bot blocking
+    attr_accessor :goodbots
 
     # @return [Array] list of all defined bots
     def self.all; @@all ||= []; end
@@ -404,7 +406,7 @@ module Ebooks
       elsif ev.is_a? Twitter::Tweet
         meta = meta(ev)
 
-        if conversation(ev).is_bot?(ev.user.screen_name)
+        if conversation(ev).is_bot?(ev.user.screen_name) && !goodbots.include?(ev.user.screen_name)
           log "Not replying to suspected bot @#{ev.user.screen_name}"
           return false
         end
